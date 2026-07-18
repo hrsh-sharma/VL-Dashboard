@@ -1,0 +1,81 @@
+<div class="login-form-wrapper">
+  <div class="login-form-header">
+    <h3>{{ config.welcomeTitle | translate }}</h3>
+    <h4>{{ config.subtitle | translate }}</h4>
+  </div>
+  
+  <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <!-- Email Field -->
+    <div class="form-group">
+      <label for="email" class="form-label">
+        {{ config.emailPlaceholder | translate }}
+      </label>
+      <div class="input-wrapper">
+        <input 
+          type="email" 
+          class="form-control" 
+          id="email" 
+          formControlName="email"
+          [placeholder]="config.emailPlaceholder | translate"
+          [class.is-invalid]="emailControl?.touched && emailControl?.invalid" />
+        <div *ngIf="emailControl?.touched && emailControl?.errors?.['required']" class="invalid-feedback">
+          {{ 'email_is_required' | translate }}
+        </div>
+        <div *ngIf="emailControl?.touched && emailControl?.errors?.['email']" class="invalid-feedback">
+          {{ 'invalid_email' | translate }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Password Field -->
+    <div class="form-group">
+      <label for="password" class="form-label">
+        {{ config.passwordPlaceholder | translate }}
+      </label>
+      <div class="input-wrapper">
+        <input 
+          type="password" 
+          class="form-control" 
+          id="password" 
+          formControlName="password"
+          [placeholder]="config.passwordPlaceholder | translate"
+          [class.is-invalid]="passwordControl?.touched && passwordControl?.invalid" />
+        <div *ngIf="passwordControl?.touched && passwordControl?.errors?.['required']" class="invalid-feedback">
+          {{ 'password_is_required' | translate }}
+        </div>
+      </div>
+    </div>
+
+    <!-- ReCaptcha Field -->
+    <div class="form-group" *ngIf="config.showReCaptcha && reCaptcha">
+      <re-captcha formControlName="recaptcha"></re-captcha>
+      <div *ngIf="recaptchaControl?.touched && recaptchaControl?.errors?.['required']" class="invalid-feedback">
+        {{ 'reCaptcha is required' | translate }}
+      </div>
+    </div>
+
+    <!-- Forgot Password Link -->
+    <div class="form-actions" *ngIf="config.showForgotPassword">
+      <a class="forgot-password-link" [routerLink]="[config.forgotPasswordLink]">
+        {{ 'forgot_password' | translate }}?
+      </a>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-submit">
+      <app-button 
+        [class]="'btn btn-theme login-submit-btn w-100 justify-content-center'" 
+        [id]="'login_btn'"
+        [type]="'submit'">
+        {{ config.buttonText | translate }}
+      </app-button>
+    </div>
+
+    <!-- Sign Up Link -->
+    <div class="form-footer" *ngIf="config.showSignUp">
+      <h4>{{ 'dont_account' | translate }}</h4>
+      <a [routerLink]="[config.signUpLink]">{{ 'sign_up' | translate }}</a>
+    </div>
+  </form>
+</div>
+

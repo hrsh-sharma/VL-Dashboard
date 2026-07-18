@@ -1,0 +1,18 @@
+<section class="log-in-section section-b-space">
+  <div class="container w-100">
+    <div class="row">
+      <div class="col-xl-5 col-lg-6">
+        <app-alert></app-alert>
+        <div class="log-in-box">
+          <app-login-form 
+            [config]="loginFormConfig"
+            [formGroup]="form"
+            [reCaptcha]="reCaptcha"
+            (formReady)="onFormReady($event)"
+            (formSubmit)="submit($event)">
+          </app-login-form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
