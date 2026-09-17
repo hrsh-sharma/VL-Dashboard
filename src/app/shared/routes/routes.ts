@@ -154,4 +154,12 @@ export const content: Routes = [
     path: "subscription",
     loadChildren: () => import("../../components/subscription/subscription.module").then((m) => m.SubscriptionModule)
   },
+  {
+    path: "seller-kyc",
+    loadChildren: () => import("../../components/seller-kyc/seller-kyc.module").then((m) => m.SellerKycModule)
+  },
+  {
+    path: "seller-account",
+    loadChildren: () => import("../../components/seller-account/seller-account.module").then((m) => m.SellerAccountModule)
+  }
 ];

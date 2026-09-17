@@ -1,0 +1,183 @@
+<app-page-wrapper [gridClass]="'col-sm-12'" [title]="'KYC Details'">
+  <div class="row" *ngIf="kyc$ | async as kyc">
+    <!-- Store Info -->
+    <div class="col-12 mb-5">
+      <div class="card kyc-card">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <h5><i class="ri-store-2-line me-2 text-primary"></i> Store Information</h5>
+          <div>
+            <span class="badge badge-warning px-3 py-2 fs-6 shadow-sm" *ngIf="kyc.status === 0">Pending</span>
+            <span class="badge badge-success px-3 py-2 fs-6 shadow-sm" *ngIf="kyc.status === 1">Approved</span>
+            <span class="badge badge-danger px-3 py-2 fs-6 shadow-sm" *ngIf="kyc.status === 2">Declined</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row g-4">
+            <div class="col-xl-3 col-sm-6">
+              <div class="info-item">
+                <i class="ri-store-3-line"></i>
+                <div class="text-content">
+                  <span class="label">Store Name</span>
+                  <span class="value">{{ kyc.store?.store_name }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+              <div class="info-item">
+                <i class="ri-user-3-line"></i>
+                <div class="text-content">
+                  <span class="label">Vendor Name</span>
+                  <span class="value">{{ kyc.store?.vendor?.name }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+              <div class="info-item">
+                <i class="ri-mail-line"></i>
+                <div class="text-content">
+                  <span class="label">Email Address</span>
+                  <span class="value" title="{{ kyc.store?.vendor?.email }}">{{ kyc.store?.vendor?.email }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+              <div class="info-item">
+                <i class="ri-phone-line"></i>
+                <div class="text-content">
+                  <span class="label">Phone Number</span>
+                  <span class="value">{{ kyc.store?.vendor?.phone }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 mt-4 pt-3 border-top">
+              <div class="text-muted fw-semibold">
+                <i class="ri-calendar-line me-2 fs-5 align-middle"></i> 
+                <span>Submitted on: {{ kyc.created_at | date:'medium' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents Section -->
+    <div class="col-12 mb-4">
+      <h4 class="fw-bold mb-0 text-dark"><i class="ri-folder-open-line me-2 text-primary"></i> KYC Documents</h4>
+      <p class="text-muted mt-2">Manage and verify the seller's submitted identity and business documents.</p>
+    </div>
+
+    <!-- Reusable Document Card Template -->
+    <ng-container *ngTemplateOutlet="docTemplate; context: { title: 'PAN Card', docUrl: kyc.pan_file?.asset_url, docStatus: kyc.pan_status, docRemark: kyc.pan_remark, type: 'pan', file: kyc.pan_file }"></ng-container>
+    <ng-container *ngTemplateOutlet="docTemplate; context: { title: 'GST Certificate', docUrl: kyc.gst_file?.asset_url, docStatus: kyc.gst_status, docRemark: kyc.gst_remark, type: 'gst', file: kyc.gst_file }"></ng-container>
+    <ng-container *ngTemplateOutlet="docTemplate; context: { title: 'Business Registration', docUrl: kyc.business_file?.asset_url, docStatus: kyc.business_status, docRemark: kyc.business_remark, type: 'business', file: kyc.business_file }"></ng-container>
+    <ng-container *ngTemplateOutlet="docTemplate; context: { title: 'Address Proof', docUrl: kyc.address_file?.asset_url, docStatus: kyc.address_status, docRemark: kyc.address_remark, type: 'address', file: kyc.address_file }"></ng-container>
+    <ng-container *ngTemplateOutlet="docTemplate; context: { title: 'Owner ID', docUrl: kyc.owner_file?.asset_url, docStatus: kyc.owner_status, docRemark: kyc.owner_remark, type: 'owner', file: kyc.owner_file }"></ng-container>
+
+  </div>
+</app-page-wrapper>
+
+<ng-template #docTemplate let-title="title" let-docUrl="docUrl" let-docStatus="docStatus" let-docRemark="docRemark" let-type="type" let-file="file">
+  <div class="col-xl-4 col-md-6 mb-4">
+    <div class="doc-card">
+      <div class="doc-header">
+        <h6>{{ title }}</h6>
+        <span *ngIf="file">
+          <span class="badge badge-warning shadow-sm" *ngIf="docStatus === 0">Pending</span>
+          <span class="badge badge-success shadow-sm" *ngIf="docStatus === 1">Approved</span>
+          <span class="badge badge-danger shadow-sm" *ngIf="docStatus === 2">Declined</span>
+        </span>
+      </div>
+      <div class="doc-body">
+        <div *ngIf="file; else noFile">
+          <div class="d-flex align-items-center">
+             <div class="fs-1 text-primary me-3">
+                <i class="ri-file-pdf-fill text-danger" *ngIf="(file.mime_type || '').includes('pdf')"></i>
+                <i class="ri-image-fill text-primary" *ngIf="!(file.mime_type || '').includes('pdf')"></i>
+             </div>
+             <div class="overflow-hidden">
+                <div class="fw-bold text-truncate" title="{{ file.file_name }}">{{ file.file_name }}</div>
+                <small class="text-muted text-uppercase fw-semibold">{{ file.mime_type?.split('/')?.pop() || 'File' }}</small>
+             </div>
+          </div>
+          
+          <div *ngIf="docRemark" class="alert alert-danger py-2 px-3 mt-3 mb-0" style="font-size: 13px;">
+            <i class="ri-error-warning-line me-1"></i> <strong>Remark:</strong> {{ docRemark }}
+          </div>
+
+          <div class="doc-actions">
+            <button class="btn btn-outline-primary btn-sm d-flex align-items-center" (click)="viewDocument(docUrl)">
+              <i class="ri-eye-line me-1"></i> View
+            </button>
+            <button class="btn btn-success btn-sm d-flex align-items-center" (click)="approve(type)" *ngIf="docStatus !== 1">
+              <i class="ri-check-line me-1"></i> Approve
+            </button>
+            <button class="btn btn-danger btn-sm d-flex align-items-center" (click)="decline(type)" *ngIf="docStatus !== 2">
+              <i class="ri-close-line me-1"></i> Decline
+            </button>
+          </div>
+        </div>
+        <ng-template #noFile>
+          <div class="text-center text-muted py-4">
+             <div style="font-size: 3rem; color: #e9ecef; margin-bottom: 10px;">
+               <i class="ri-file-damage-line"></i>
+             </div>
+             <span class="fw-medium">Not Submitted</span>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #documentModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title fw-bold text-dark"><i class="ri-file-text-line me-2"></i> Document Viewer</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body text-center p-0" style="background: #f8f9fa;">
+    <ng-container *ngIf="currentDocumentUrl">
+      <iframe *ngIf="isPdf" [src]="currentDocumentUrl" width="100%" height="70vh" style="border: none; min-height: 600px; display: block;"></iframe>
+      <div *ngIf="!isPdf" class="p-4" style="max-height: 80vh; overflow: auto; display: flex; align-items: center; justify-content: center;">
+        <img [src]="currentDocumentUrl" class="img-fluid rounded shadow-sm" alt="Document" style="max-height: 75vh; width: auto; object-fit: contain;">
+      </div>
+    </ng-container>
+  </div>
+</ng-template>
+
+<!-- Approve Modal -->
+<ng-template #approveModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title fw-bold text-dark d-flex align-items-center">
+      <i class="ri-check-line text-success me-2 fs-4"></i> Approve Document
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p class="fs-6">Are you sure you want to approve the <strong>{{ activeDocType | uppercase }}</strong> document?</p>
+  </div>
+  <div class="modal-footer">
+    <app-button [class]="'btn-outline-secondary fw-bold btn-md btn'" [spinner]="false" (click)="modal.dismiss('Cancel')">Cancel</app-button>
+    <app-button [class]="'btn-theme fw-bold btn-md btn'" [spinner]="false" (click)="confirmApprove()">Yes, Approve</app-button>
+  </div>
+</ng-template>
+
+<!-- Decline Modal -->
+<ng-template #declineModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title fw-bold text-dark d-flex align-items-center">
+      <i class="ri-close-line text-danger me-2 fs-4"></i> Decline Document
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p class="fs-6 mb-3">Please provide a reason for declining the <strong>{{ activeDocType | uppercase }}</strong> document:</p>
+    <div class="form-group">
+      <textarea class="form-control" rows="3" placeholder="Enter reason here..." (change)="declineReason = $any($event.target).value" (keyup)="declineReason = $any($event.target).value"></textarea>
+      <small class="text-danger mt-1 d-block" *ngIf="declineReason.trim() === ''">Reason is required to decline.</small>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <app-button [class]="'btn-outline-secondary fw-bold btn-md btn'" [spinner]="false" (click)="modal.dismiss('Cancel')">Cancel</app-button>
+    <app-button [class]="'btn-danger fw-bold btn-md btn'" [spinner]="false" [disabled]="declineReason.trim() === ''" (click)="confirmDecline()">Decline Document</app-button>
+  </div>
+</ng-template>

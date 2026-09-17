@@ -185,6 +185,33 @@ export const menu: Sidebar[] = [
     ],
   },
   {
+    id: 22,
+    title: "Seller",
+    active: false,
+    icon: "ri-team-line",
+    type: "sub",
+    level: 1,
+    acl_permission: ["store.index"],
+    children: [
+      {
+        parent_id: 22,
+        title: "KYC",
+        path: "/seller-kyc",
+        type: "link",
+        level: 2,
+        permission: ["store.index"]
+      },
+      {
+        parent_id: 22,
+        title: "Account",
+        path: "/seller-account",
+        type: "link",
+        level: 2,
+        permission: ["store.index"]
+      }
+    ]
+  },
+  {
     id: 5,
     title: "orders",
     active: false,

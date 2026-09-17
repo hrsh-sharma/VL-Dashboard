@@ -1,0 +1,12 @@
+<app-page-wrapper [gridClass]="'col-sm-12'" [title]="'Seller KYC'">
+    <div class="mb-4">
+        <p class="text-muted">Review and verify seller KYC documents submitted by vendors.</p>
+    </div>
+    <app-table 
+        [tableConfig]="tableConfig"
+        [hasCheckbox]="false"
+        (tableChanged)="onTableChange($event)"
+        (rowClicked)="view($event)"
+        (action)="onActionClicked($event)">
+    </app-table>
+</app-page-wrapper>
