@@ -38,7 +38,8 @@ export class SellerKycComponent {
 
   ngOnInit() {
     this.kyc$.subscribe(kyc => { 
-      let kycRecords = kyc?.data?.filter((element: any) => {
+      let kycRecords = kyc?.data?.map((item: any) => {
+        let element = { ...item };
         // Map fields for table
         element.store_name = element.store?.store_name;
         element.vendor_name = element.store?.vendor?.name;
@@ -55,14 +56,14 @@ export class SellerKycComponent {
         
         element.documents_text = `${docsCount} / ${totalDocs} Documents`;
 
-        if (element.status === 0) {
-            element.kyc_status = `<span class="badge badge-warning">Pending</span>`;
-        } else if (element.status === 1) {
-            element.kyc_status = `<span class="badge badge-success">Approved</span>`;
-        } else if (element.status === 2) {
-            element.kyc_status = `<span class="badge badge-danger">Declined</span>`;
+        if (element.status == 0) {
+            element.kyc_status = `<div class="status-pending"><span>Pending</span></div>`;
+        } else if (element.status == 1) {
+            element.kyc_status = `<div class="status-approved"><span>Approved</span></div>`;
+        } else if (element.status == 2) {
+            element.kyc_status = `<div class="status-rejected"><span>Declined</span></div>`;
         } else {
-            element.kyc_status = `<span class="badge badge-secondary">Unknown</span>`;
+            element.kyc_status = `<div class="status-pending"><span>Unknown</span></div>`;
         }
 
         return element;
